@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+
+  /* Netflix-style dark overlay on movie background */
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
+    url('https://images.unsplash.com/photo-1606813902734-5cb0c23a727a?q=80&w=1920&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+  color: #fff;
+}
