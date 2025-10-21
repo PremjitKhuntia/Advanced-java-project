@@ -24,14 +24,14 @@ public class SeatServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String[] seats = request.getParameterValues("seats");
         String movieId = (String) session.getAttribute("movieId");
-        Integer userId = (Integer) session.getAttribute("userId"); // set at login
+        Integer userId = (Integer) session.getAttribute("userId"); 
 
         if (seats == null && movieId == null && userId == null) {
             out.println("<h3>❌ Invalid booking request!</h3>");
             return;
         }
 
-        // Convert seats array to a comma-separated string
+        
         String selectedSeats = String.join(",", seats);
 
         try (Connection conn = DBConnection.getConnection()) {

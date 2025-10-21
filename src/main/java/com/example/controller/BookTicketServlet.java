@@ -27,7 +27,7 @@ public class BookTicketServlet extends HttpServlet {
         }
 
         int movieId = Integer.parseInt(movieIdStr);
-        String seats = String.join(",", seatsArr); // "A1,A2"
+        String seats = String.join(",", seatsArr); 
 
         // ✅ Get logged-in userId from session
         HttpSession session = request.getSession(false);

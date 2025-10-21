@@ -11,10 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/register")  // this URL matches "action" in JSP
+@WebServlet("/register")  
 public class RegisterServlet extends HttpServlet {
 
-    // Static block to load MySQL JDBC driver
+   
     static {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -49,7 +49,7 @@ public class RegisterServlet extends HttpServlet {
                 out.println("<h3>❌ Registration failed!</h3>");
             }
         } catch (Exception e) {
-            e.printStackTrace(out); // print error on page for debugging
+            e.printStackTrace(out); 
         }
     }
 }

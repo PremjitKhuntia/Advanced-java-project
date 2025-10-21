@@ -10,7 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
-@WebServlet("/login")  // matches login.jsp form action
+@WebServlet("/login")  
 public class LoginServlet extends HttpServlet {
 
     static {
@@ -41,9 +41,9 @@ public class LoginServlet extends HttpServlet {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                // ✅ Store both userId and username in session
+               
                 HttpSession session = request.getSession();
-                session.setAttribute("userId", rs.getInt("id")); // assumes 'id' column in users table
+                session.setAttribute("userId", rs.getInt("id")); 
                 session.setAttribute("username", rs.getString("username"));
 
                 out.println("<h3>Login successful! Welcome, " + rs.getString("username") + "</h3>");

@@ -1,89 +1,180 @@
-<%@ page import="java.sql.*,com.example.util.DBConnection" %>
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.sql.*, com.example.util.DBConnection" %>
 <html>
 <head>
     <title>Available Movies</title>
-   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #141E30, #243B55);
+            color: #fff;
+        }
+
+        /* Navbar styling (reuse same style) */
+        nav {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        nav .logo {
+            font-size: 22px;
+            font-weight: 600;
+            color: #00BFFF;
+            text-shadow: 0 0 10px #00BFFF;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        nav ul li {
+            margin-left: 25px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #00BFFF;
+            font-size: 16px;
+            padding: 8px 16px;
+            border: 2px solid #00BFFF;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        nav ul li a:hover {
+            background-color: #00BFFF;
+            color: #fff;
+            box-shadow: 0 0 10px #00BFFF;
+        }
+
+        /* Page title */
+        h2 {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 30px;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* Movie grid layout */
+        .movie-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 30px;
+            padding: 40px;
+            justify-items: center;
+        }
+
+        /* Each movie card */
+        .movie-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 220px;
+            text-align: center;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+        }
+
+        /* Movie poster image */
+        .movie-card img {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            border-bottom: 2px solid #00BFFF;
+        }
+
+        /* Movie details */
+        .movie-info {
+            padding: 15px;
+        }
+
+        .movie-info h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #00BFFF;
+        }
+
+        .movie-info p {
+            font-size: 14px;
+            margin: 4px 0;
+            color: #e0e0e0;
+        }
+
+        .book-btn {
+            margin-top: 10px;
+            display: inline-block;
+            background: #00BFFF;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .book-btn:hover {
+            background: #008ecc;
+        }
+    </style>
 </head>
 <body>
-    <h2>Available Movies</h2>
 
-    <!-- Filter Form -->
-    <form method="get" action="movies.jsp">
-        <label>Genre:</label>
-        <select name="genre">
-            <option value="">All</option>
-            <option value="Action">Action</option>
-            <option value="Thriller">Thriller</option>
-            <option value="Anime">Anime</option>
-            <option value="Horror">Horror</option>
-            <option value="Scifi">Scifi</option>
-        </select>
+    <!-- Navbar -->
+    <nav>
+        <div class="logo">🎬 Movie Booking</div>
+        <ul>
+            <li><a href="index.jsp">Home</a></li>
+            <li><a href="movies.jsp">Movies</a></li>
+            <li><a href="login.jsp">Login</a></li>
+            <li><a href="register.jsp">Register</a></li>
+        </ul>
+    </nav>
 
-        <label>Language:</label>
-        <select name="language">
-            <option value="">All</option>
-            <option value="Hindi">Hindi</option>
-            <option value="English">English</option>
-            <option value="Telugu">Telugu</option>
-            <option value="Japanese">Japanese</option>
-            <option value="Korean">Korean</option>
-        </select>
+    <h2>Now Showing</h2>
 
-        <input type="submit" value="Filter">
-    </form>
-    <br>
-
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Movie</th>
-            <th>Genre</th>
-            <th>Duration</th>
-            <th>Language</th>
-            <th>Release Date</th>
-            <th>Show Time</th>
-            <th>Action</th>
-        </tr>
-
+    <div class="movie-container">
         <%
-            String genre = request.getParameter("genre");
-            String language = request.getParameter("language");
+            try {
+                Connection con = DBConnection.getConnection();
+                PreparedStatement ps = con.prepareStatement("SELECT * FROM movie");
+                ResultSet rs = ps.executeQuery();
 
-            String query = "SELECT * FROM movies WHERE 1=1";
-            if (genre != null && !genre.isEmpty()) {
-                query += " AND genre='" + genre + "'";
-            }
-            if (language != null && !language.isEmpty()) {
-                query += " AND language='" + language + "'";
-            }
-
-            try (Connection conn = DBConnection.getConnection();
-                 Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery(query)) {
                 while (rs.next()) {
+                    String title = rs.getString("title");
+                    String genre = rs.getString("genre");
+                    String showtime = rs.getString("showtime");
+                    String poster = rs.getString("poster_url"); // column in DB for image URL
         %>
-        <tr>
-            <td><%= rs.getInt("id") %></td>
-            <td><%= rs.getString("title") %></td>
-            <td><%= rs.getString("genre") %></td>
-            <td><%= rs.getInt("duration") %> mins</td>
-            <td><%= rs.getString("language") %></td>
-            <td><%= rs.getDate("release_date") %></td>
-            <td><%= rs.getTimestamp("show_time") %></td>
-            <td>
-                <form action="seats.jsp" method="get">
-                     <input type="hidden" name="movieId" value="<%= rs.getInt("id") %>">
-                     <input type="submit" value="Book Now">
-                </form>
-            </td>
-        </tr>
+
+        <div class="movie-card">
+            <img src="<%= poster %>" alt="<%= title %>">
+            <div class="movie-info">
+                <h3><%= title %></h3>
+                <p>Genre: <%= genre %></p>
+                <p>Showtime: <%= showtime %></p>
+                <a href="seats.jsp?movieId=<%= rs.getInt("id") %>" class="book-btn">Book Now</a>
+
+            </div>
+        </div>
+
         <%
                 }
+                con.close();
             } catch (Exception e) {
-                out.println("Error: " + e.getMessage());
+                out.println("<p style='color:red;text-align:center;'>Error loading movies: " + e.getMessage() + "</p>");
             }
         %>
-    </table>
+    </div>
+
 </body>
 </html>
