@@ -1,4 +1,4 @@
-package com.example.dao;
+/*package com.example.dao;
 import com.example.model.Movie;
 import com.example.util.DBConnection;
 import java.sql.*;
@@ -24,4 +24,4 @@ public class MovieDAO {
     }
     return list;
   }
-}
+}*/

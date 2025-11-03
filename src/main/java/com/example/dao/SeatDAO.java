@@ -1,4 +1,4 @@
-package com.example.dao;
+/*package com.example.dao;
 import com.example.model.Seat;
 import com.example.util.DBConnection;
 import java.sql.*;
@@ -25,4 +25,4 @@ public class SeatDAO {
     }
     return list;
   }
-}
+}*/

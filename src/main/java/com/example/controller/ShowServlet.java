@@ -1,4 +1,4 @@
-package com.example.controller;
+/*package com.example.controller;
 import com.example.dao.ShowDAO;
 import com.example.model.Show;
 import javax.servlet.*; import javax.servlet.http.*; import javax.servlet.annotation.WebServlet;
@@ -19,4 +19,4 @@ public class ShowServlet extends HttpServlet {
       req.getRequestDispatcher("/error.jsp").forward(req, resp);
     }
   }
-}
+}*/
